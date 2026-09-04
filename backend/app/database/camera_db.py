@@ -1,6 +1,8 @@
 import sqlite3
 from pathlib import Path
 
+from app.services.mock_camera_catalog import MOCK_CAMERAS
+
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 DB_PATH = BASE_DIR / "sentinel_visionguard.db"
 
@@ -27,6 +29,35 @@ def initialize_database():
         )
     """)
 
+    cursor.execute("SELECT COUNT(*) FROM cameras")
+    camera_count = cursor.fetchone()[0]
+
+    if camera_count == 0:
+        for camera in MOCK_CAMERAS:
+            cursor.execute(
+                """
+                INSERT INTO cameras (
+                    id,
+                    location,
+                    department,
+                    codec,
+                    live,
+                    resolution,
+                    rtsp_url
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    camera["id"],
+                    camera["location"],
+                    camera["department"],
+                    camera["codec"],
+                    int(camera["live"]),
+                    camera["resolution"],
+                    camera["rtsp_url"],
+                ),
+            )
+
     connection.commit()
     connection.close()
 
@@ -49,7 +80,7 @@ def get_camera_by_id(camera_id: str):
 
     cursor.execute(
         "SELECT * FROM cameras WHERE id = ?",
-        (camera_id,)
+        (camera_id,),
     )
 
     row = cursor.fetchone()
@@ -83,7 +114,7 @@ def create_camera(camera: dict):
             int(camera["live"]),
             camera["resolution"],
             camera["rtsp_url"],
-        )
+        ),
     )
 
     connection.commit()
@@ -128,7 +159,7 @@ def update_camera(camera_id: str, updates: dict):
 
     cursor.execute(
         f"UPDATE cameras SET {fields} WHERE id = ?",
-        values
+        values,
     )
 
     connection.commit()
@@ -141,7 +172,7 @@ def delete_camera(camera_id: str):
 
     cursor.execute(
         "DELETE FROM cameras WHERE id = ?",
-        (camera_id,)
+        (camera_id,),
     )
 
     connection.commit()
