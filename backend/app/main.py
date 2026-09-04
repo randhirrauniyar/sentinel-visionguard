@@ -1,6 +1,9 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.database.camera_db import initialize_database
 from app.api.cameras import router as cameras_router
 from app.api.alerts import router as alerts_router
 from app.api.events import router as events_router
@@ -10,20 +13,31 @@ from app.api.streams import router as streams_router
 from app.api.stream_status import router as stream_status_router
 from app.api.simulation import router as simulation_router
 
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    initialize_database()
+    yield
+
+
 app = FastAPI(
-    title="Sentinel VisionGuard API"
+    title="Sentinel VisionGuard API",
+    lifespan=lifespan,
 )
+
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:5173",
         "http://127.0.0.1:5173",
+        "https://sentinel-visionguard.vercel.app",
     ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 app.include_router(cameras_router)
 app.include_router(alerts_router)
