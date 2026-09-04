@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import "./App.css";
 
-const API_BASE = "";
+const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:8000";
 const STREAM_BASE = `${API_BASE}/api/streams`;
 const ANALYTICS_STREAM = `${API_BASE}/api/analytics/live-feed`;
 
