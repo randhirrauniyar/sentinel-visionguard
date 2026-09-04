@@ -1,0 +1,7 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+sentinel_visionguard.db
+test_rtsp.py
+test_vehicle_detection.py

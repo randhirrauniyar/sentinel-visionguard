@@ -17,3 +17,28 @@ frontend/dist/
 
 # OS
 .DS_Store
+
+# Project backups
+*.backup
+
+# Local databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Python test artifacts
+.pytest_cache/
+
+# Local test scripts
+backend/test_rtsp.py
+backend/test_vehicle_detection.py
+
+# Database
+backend/*.db
+
+# AI models
+backend/*.pt
+
+# Test files
+backend/test_rtsp.py
+backend/test_vehicle_detection.py
